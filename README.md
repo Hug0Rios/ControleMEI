@@ -40,6 +40,7 @@ Ajudar microempreendedores a manter o controle financeiro sem complicação, evi
 
 ---
 
-## Autor
+## Autores
 
 Hugo Rios
+Mauricio Zenão
