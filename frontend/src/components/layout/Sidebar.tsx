@@ -9,7 +9,6 @@ type NavigationChild = {
 
 type NavigationItem = {
   label: string;
-  icon: string;
   to: string;
   children?: NavigationChild[];
 };
@@ -22,12 +21,10 @@ type SidebarProps = {
 const navigation: NavigationItem[] = [
   {
     label: 'Dashboard',
-    icon: 'D',
     to: '/app/dashboard',
   },
   {
     label: 'Financeiro',
-    icon: 'F',
     to: '/app/financeiro/faturamento',
     children: [
       { label: 'Faturamento', to: '/app/financeiro/faturamento' },
@@ -36,7 +33,6 @@ const navigation: NavigationItem[] = [
   },
   {
     label: 'Notas Fiscais',
-    icon: 'N',
     to: '/app/notas/nfse',
     children: [
       { label: 'NFS-e', to: '/app/notas/nfse' },
@@ -45,7 +41,6 @@ const navigation: NavigationItem[] = [
   },
   {
     label: 'DAS MEI',
-    icon: 'M',
     to: '/app/das/gerar',
     children: [
       { label: 'Gerar DAS', to: '/app/das/gerar' },
@@ -54,7 +49,6 @@ const navigation: NavigationItem[] = [
   },
   {
     label: 'Relatórios',
-    icon: 'R',
     to: '/app/relatorios/mensal',
     children: [
       { label: 'Relatórios Mensais', to: '/app/relatorios/mensal' },
@@ -63,17 +57,16 @@ const navigation: NavigationItem[] = [
   },
   {
     label: 'Cadastros',
-    icon: 'C',
     to: '/app/cadastros/clientes',
     children: [
       { label: 'Clientes', to: '/app/cadastros/clientes' },
+      { label: 'Empresas', to: '/app/cadastros/empresas' },
       { label: 'Categorias', to: '/app/cadastros/categorias' },
       { label: 'Fornecedores', to: '/app/cadastros/fornecedores' },
     ],
   },
   {
     label: 'Configurações',
-    icon: 'S',
     to: '/app/configuracoes/empresa',
     children: [
       { label: 'Empresa', to: '/app/configuracoes/empresa' },
@@ -84,19 +77,21 @@ const navigation: NavigationItem[] = [
 
 function parentLinkClass(isActive: boolean) {
   return [
-    'flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-semibold transition',
+    'group relative flex min-h-10 items-center rounded-xl px-4 text-sm font-semibold transition',
     'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300',
     isActive
       ? 'bg-blue-600 text-white shadow-lg shadow-blue-950/25'
-      : 'text-blue-50/80 hover:bg-white/10 hover:text-white',
+      : 'text-slate-300 hover:bg-white/[0.08] hover:text-white',
   ].join(' ');
 }
 
 function childLinkClass(isActive: boolean) {
   return [
-    'block rounded-lg px-2 py-1.5 text-xs font-semibold transition',
+    'relative block rounded-lg px-4 py-2 text-sm font-medium transition',
     'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300',
-    isActive ? 'bg-white/10 text-white' : 'text-blue-50/55 hover:bg-white/10 hover:text-white',
+    isActive
+      ? 'bg-white/10 text-white'
+      : 'text-slate-400 hover:bg-white/[0.08] hover:text-slate-100',
   ].join(' ');
 }
 
@@ -115,34 +110,31 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       )}
 
       <aside
-        className={`fixed bottom-3 left-3 top-3 z-40 w-[264px] rounded-2xl border border-white/10 bg-slate-950 p-3 pl-2 text-white shadow-xl shadow-blue-950/25 transition-transform dark:border-slate-700/60 dark:bg-slate-900 lg:translate-x-0 ${
+        className={`fixed bottom-3 left-3 top-3 z-40 w-[264px] rounded-2xl border border-white/10 bg-slate-950 p-3 text-white shadow-xl shadow-blue-950/25 transition-transform dark:border-slate-700/60 dark:bg-slate-900 lg:translate-x-0 ${
           isOpen ? 'translate-x-0' : '-translate-x-[110%]'
         }`}
       >
-        <div className="mb-3 flex justify-center overflow-hidden rounded-lg py-2">
+        <div className="mb-4 flex justify-center overflow-hidden rounded-lg px-2 py-2">
           <img src={Logo} alt="Meu MEI Brasil" className="h-20 w-full object-contain" />
         </div>
 
-        <nav className="space-y-1 overflow-y-auto pr-1 lg:max-h-[calc(100vh-96px)]">
+        <nav className="space-y-1 overflow-y-auto pr-1 lg:max-h-[calc(100vh-104px)]">
           {navigation.map((item) => {
             const isGroupActive =
               pathname === item.to || Boolean(item.children?.some((child) => child.to === pathname));
 
             return (
-              <div key={item.label} className={item.children ? 'pb-1' : undefined}>
+              <div key={item.label} className="space-y-1">
                 <NavLink
                   to={item.to}
                   onClick={onClose}
                   className={() => parentLinkClass(isGroupActive)}
                 >
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/10 text-[11px] font-bold">
-                    {item.icon}
-                  </span>
                   <span className="truncate">{item.label}</span>
                 </NavLink>
 
                 {item.children && (
-                  <div className="ml-9 mt-1 space-y-1 border-l border-white/10 pl-3">
+                  <div className="space-y-0.5 pb-2 pl-5">
                     {item.children.map((child) => (
                       <NavLink
                         key={child.to}
@@ -160,9 +152,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           })}
 
           <NavLink to="/" onClick={onClose} className={({ isActive }) => parentLinkClass(isActive)}>
-            <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-white/10 text-[11px] font-bold">
-              X
-            </span>
             Sair
           </NavLink>
         </nav>
