@@ -1,6 +1,3 @@
-<p align="center">
-  <img src="assets/cover-controlemei.svg" alt="ControleMEI" />
-</p>
 
 # ControleMEI
 
