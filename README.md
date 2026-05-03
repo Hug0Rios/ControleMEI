@@ -84,7 +84,8 @@ Com base nos dados inseridos, o usuário consegue:
 
 ##  Tecnologias
 
-(Adicionar conforme evolução do projeto)
+- TypeScript
+- HTML
 
 ---
 
