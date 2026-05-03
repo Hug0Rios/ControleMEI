@@ -25,10 +25,10 @@ const descriptionClasses: Record<MetricTone, string> = {
 
 export function MetricCard({ title, value, description, icon, tone, progress }: MetricCardProps) {
   return (
-    <article className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm transition dark:border-slate-800 dark:bg-slate-900/95">
+    <article className="rounded-xl border border-slate-200/80 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-100 hover:shadow-md dark:border-slate-800 dark:bg-slate-900/95 dark:hover:border-blue-500/25">
       <div className="flex gap-3">
         <span
-          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-[11px] font-bold ${toneClasses[tone]}`}
+          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-[11px] font-bold ${toneClasses[tone]}`}
         >
           {icon}
         </span>

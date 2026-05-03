@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { Layout } from '../components/layout/Layout';
 import { Categorias } from '../pages/private/Cadastros/Categorias';
 import { Clientes } from '../pages/private/Cadastros/Clientes';
+import { Empresas } from '../pages/private/Cadastros/Empresas';
 import { Fornecedores } from '../pages/private/Cadastros/Fornecedores';
 import { Historico } from '../pages/private/Das/Historico';
 import { GerarDas } from '../pages/private/Das/Gerar';
@@ -34,6 +35,7 @@ export function AppRoutes() {
         <Route path="relatorios/mensal" element={<Mensal />} />
         <Route path="relatorios/anual" element={<Anual />} />
         <Route path="cadastros/clientes" element={<Clientes />} />
+        <Route path="cadastros/empresas" element={<Empresas />} />
         <Route path="cadastros/categorias" element={<Categorias />} />
         <Route path="cadastros/fornecedores" element={<Fornecedores />} />
         <Route path="configuracoes/empresa" element={<Empresa />} />
