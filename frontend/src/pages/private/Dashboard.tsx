@@ -12,6 +12,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
+import { Link } from 'react-router-dom';
 
 import { AlertCard } from '../../components/ui/AlertCard';
 import { ChartCard } from '../../components/ui/ChartCard';
@@ -66,12 +67,12 @@ export function Dashboard() {
         <ChartCard
           title="Faturamento"
           action={
-            <button
-              type="button"
-              className="rounded-lg border border-slate-200 px-3 py-1 text-xs font-medium text-slate-600 dark:border-slate-700 dark:text-slate-300"
+            <Link
+              to="/app/relatorios/anual"
+              className="rounded-lg border border-slate-200 px-3 py-1 text-xs font-medium text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 dark:border-slate-700 dark:text-slate-300 dark:hover:border-blue-500/30 dark:hover:bg-blue-500/10 dark:hover:text-blue-200"
             >
               Anual
-            </button>
+            </Link>
           }
         >
           <div className="h-[225px]">
@@ -119,7 +120,17 @@ export function Dashboard() {
           </div>
         </ChartCard>
 
-        <ChartCard title="Limite MEI">
+        <ChartCard
+          title="Limite MEI"
+          action={
+            <Link
+              to="/app/das/gerar"
+              className="rounded-lg border border-slate-200 px-3 py-1 text-xs font-medium text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 dark:border-slate-700 dark:text-slate-300 dark:hover:border-blue-500/30 dark:hover:bg-blue-500/10 dark:hover:text-blue-200"
+            >
+              Gerar DAS
+            </Link>
+          }
+        >
           <div className="grid min-h-[225px] grid-cols-1 items-center gap-2 sm:h-[225px] sm:grid-cols-[1fr_0.95fr]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -173,7 +184,17 @@ export function Dashboard() {
           </div>
         </ChartCard>
 
-        <ChartCard title="Fluxo de Caixa (Mes)">
+        <ChartCard
+          title="Fluxo de Caixa (Mes)"
+          action={
+            <Link
+              to="/app/financeiro/faturamento"
+              className="rounded-lg border border-slate-200 px-3 py-1 text-xs font-medium text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 dark:border-slate-700 dark:text-slate-300 dark:hover:border-blue-500/30 dark:hover:bg-blue-500/10 dark:hover:text-blue-200"
+            >
+              Ver financeiro
+            </Link>
+          }
+        >
           <div className="grid min-h-[225px] grid-cols-1 gap-2 sm:h-[225px] sm:grid-cols-[0.48fr_1fr]">
             <div className="space-y-3 pt-4 text-xs">
               <div>
@@ -245,7 +266,11 @@ export function Dashboard() {
         <ChartCard title="Próximos Vencimentos">
           <div className="divide-y divide-slate-100 dark:divide-slate-800">
             {dueItems.map((item) => (
-              <div key={item.id} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
+              <Link
+                key={item.id}
+                to="/app/das/historico"
+                className="flex items-center gap-3 py-3 transition hover:bg-slate-50 dark:hover:bg-slate-800/60 first:pt-0 last:pb-0"
+              >
                 <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-xs font-bold text-blue-700 dark:bg-blue-500/10 dark:text-blue-300">
                   DAS
                 </span>
@@ -255,19 +280,33 @@ export function Dashboard() {
                 </div>
                 <strong className="text-sm text-slate-950 dark:text-white">{item.amount}</strong>
                 <StatusBadge label={item.status} tone={item.tone} />
-              </div>
+              </Link>
             ))}
           </div>
         </ChartCard>
 
-        <ChartCard title="Notas Fiscais (Mes)">
+        <ChartCard
+          title="Notas Fiscais (Mes)"
+          action={
+            <Link
+              to="/app/notas/nfse"
+              className="rounded-lg border border-slate-200 px-3 py-1 text-xs font-medium text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 dark:border-slate-700 dark:text-slate-300 dark:hover:border-blue-500/30 dark:hover:bg-blue-500/10 dark:hover:text-blue-200"
+            >
+              Abrir notas
+            </Link>
+          }
+        >
           <div className="divide-y divide-slate-100 dark:divide-slate-800">
             {invoiceSummary.map((item) => (
-              <div key={item.id} className="grid grid-cols-[1fr_auto_auto] items-center gap-4 py-4 first:pt-1 last:pb-1">
+              <Link
+                key={item.id}
+                to={item.label.includes('NFS') ? '/app/notas/nfse' : '/app/notas/nfe'}
+                className="grid grid-cols-[1fr_auto_auto] items-center gap-4 py-4 transition hover:bg-slate-50 dark:hover:bg-slate-800/60 first:pt-1 last:pb-1"
+              >
                 <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{item.label}</span>
                 <strong className="text-sm text-slate-950 dark:text-white">{item.quantity}</strong>
                 <span className="text-sm text-slate-700 dark:text-slate-300">{item.amount}</span>
-              </div>
+              </Link>
             ))}
           </div>
         </ChartCard>

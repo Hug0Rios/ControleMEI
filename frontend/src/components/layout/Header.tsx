@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 import { NotificationDropdown } from '../ui/NotificationDropdown';
 import { ThemeToggle } from '../ui/ThemeToggle';
 
@@ -18,13 +20,6 @@ export function Header({ onMenuClick }: HeaderProps) {
           >
             <span className="h-0.5 w-5 bg-current shadow-[0_6px_0_current,0_-6px_0_current]" />
           </button>
-          <button
-            type="button"
-            className="hidden h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 lg:flex"
-            aria-label="Menu"
-          >
-            <span className="h-0.5 w-5 bg-current shadow-[0_6px_0_current,0_-6px_0_current]" />
-          </button>
           <div className="min-w-0">
             <h1 className="truncate text-xl font-bold text-slate-950 dark:text-white">Dashboard</h1>
             <p className="hidden text-xs text-slate-500 dark:text-slate-400 sm:block">
@@ -39,12 +34,12 @@ export function Header({ onMenuClick }: HeaderProps) {
             01/05/2024 - 31/05/2024
             <span className="text-slate-400">v</span>
           </div>
-          <button
-            type="button"
-            className="hidden h-9 rounded-lg bg-blue-900 px-4 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-500 sm:block"
+          <Link
+            to="/app/financeiro/faturamento"
+            className="hidden h-9 items-center rounded-lg bg-blue-900 px-4 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-500 sm:flex"
           >
             + Novo lançamento
-          </button>
+          </Link>
           <ThemeToggle />
           <NotificationDropdown />
           <div className="flex items-center gap-2 rounded-xl px-1 py-1">
