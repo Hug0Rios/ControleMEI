@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="assets/cover-controlemei.svg" alt="ControleMEI" />
-</p>
-
 # ControleMEI
 
 Sistema voltado para o controle financeiro de Microempreendedores Individuais (MEI).
