@@ -1,5 +1,5 @@
 export type MetricTone = 'blue' | 'green' | 'red' | 'amber';
-export type AlertTone = 'warning' | 'info';
+export type AlertTone = 'critical' | 'alert' | 'info' | 'success';
 export type BadgeTone = 'danger' | 'info' | 'success';
 
 export type DashboardMetric = {
@@ -190,7 +190,7 @@ export const dashboardMock: DashboardMock = {
       id: 1,
       title: 'Atenção: Você utilizou 52,3% do seu limite anual.',
       message: 'Fique atento para não ultrapassar o limite de R$ 81.000,00.',
-      tone: 'warning',
+      tone: 'alert',
     },
     {
       id: 2,

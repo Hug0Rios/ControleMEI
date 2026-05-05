@@ -11,6 +11,8 @@ import {
 } from '../../../services/companies.service';
 import { EmpresaCnpj, formatarCNPJ } from '../../../services/cnpj.service';
 
+const ACTIVE_COMPANY_STORAGE_KEY = 'controlemei.activeCompanyName';
+
 const empresaInicial: EmpresaCnpj = {
   cnpj: '',
   razaoSocial: '',
@@ -125,6 +127,7 @@ export function Empresas() {
       setEmpresas((current) => [cadastrada, ...current]);
       setEmpresa(cadastrada);
       setCnpj(formatarCNPJ(cadastrada.cnpj));
+      window.localStorage.setItem(ACTIVE_COMPANY_STORAGE_KEY, cadastrada.razaoSocial);
       setSuccess('Empresa cadastrada com sucesso.');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Não foi possível cadastrar a empresa.');
@@ -153,6 +156,7 @@ export function Empresas() {
   function handleSelecionar(item: EmpresaCnpj) {
     setEmpresa(item);
     setCnpj(formatarCNPJ(item.cnpj));
+    window.localStorage.setItem(ACTIVE_COMPANY_STORAGE_KEY, item.razaoSocial);
     setError('');
     setSuccess('Empresa carregada no painel.');
   }
@@ -175,7 +179,7 @@ export function Empresas() {
             </p>
           </div>
 
-          <span className="rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-bold text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-200">
+          <span className="rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-bold text-[#172554] dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-200">
             {empresas.length} cadastrada{empresas.length === 1 ? '' : 's'}
           </span>
         </div>
@@ -237,7 +241,7 @@ export function Empresas() {
             type="button"
             onClick={handleCadastrar}
             disabled={!empresa.cnpj || isSaving}
-            className="bg-emerald-600 hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className="bg-blue-700 hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isSaving ? 'Salvando...' : 'Cadastrar empresa'}
           </Button>

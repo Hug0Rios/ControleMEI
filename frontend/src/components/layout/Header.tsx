@@ -1,17 +1,34 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-
+import { BarChart3 } from 'lucide-react';
 import { NotificationDropdown } from '../ui/NotificationDropdown';
 import { ThemeToggle } from '../ui/ThemeToggle';
+
+const ACTIVE_COMPANY_STORAGE_KEY = 'controlemei.activeCompanyName';
 
 type HeaderProps = {
   onMenuClick: () => void;
 };
 
 export function Header({ onMenuClick }: HeaderProps) {
+  const [companyName, setCompanyName] = useState('sua empresa');
+
+  useEffect(() => {
+    function syncCompanyName() {
+      const storedCompanyName = window.localStorage.getItem(ACTIVE_COMPANY_STORAGE_KEY);
+      setCompanyName(storedCompanyName?.trim() || 'sua empresa');
+    }
+
+    syncCompanyName();
+    window.addEventListener('storage', syncCompanyName);
+
+    return () => window.removeEventListener('storage', syncCompanyName);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 px-3 py-3 backdrop-blur dark:border-slate-800 dark:bg-[#0b111d]/90 sm:px-4">
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-3">
+    <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/0 px-3 py-3 backdrop-blur dark:border-slate-800 dark:bg-[#0b111d]/90 sm:px-4">
+      <div className="flex min-h-9 items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <button
             type="button"
             onClick={onMenuClick}
@@ -20,38 +37,18 @@ export function Header({ onMenuClick }: HeaderProps) {
           >
             <span className="h-0.5 w-5 bg-current shadow-[0_6px_0_current,0_-6px_0_current]" />
           </button>
-          <div className="min-w-0">
-            <h1 className="truncate text-xl font-bold text-slate-950 dark:text-white">Dashboard</h1>
-            <p className="hidden text-xs text-slate-500 dark:text-slate-400 sm:block">
-              Visão geral do seu negócio
-            </p>
+
+          <div className="hidden min-w-0 sm:flex">
+            <span className="truncate text-sm font-medium text-slate-600 dark:text-slate-300">
+              Bem vindo(a), {companyName}
+            </span>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="hidden h-9 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 md:flex">
-            <span className="text-slate-400">Cal</span>
-            01/05/2024 - 31/05/2024
-            <span className="text-slate-400">v</span>
-          </div>
-          <Link
-            to="/app/financeiro/faturamento"
-            className="hidden h-9 items-center rounded-lg bg-blue-900 px-4 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-500 sm:flex"
-          >
-            + Novo lançamento
-          </Link>
           <ThemeToggle />
           <NotificationDropdown />
-          <div className="flex items-center gap-2 rounded-xl px-1 py-1">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-900 text-xs font-bold text-white dark:bg-blue-600">
-              JS
-            </div>
-            <div className="hidden leading-tight xl:block">
-              <p className="text-xs font-bold text-slate-900 dark:text-white">João Silva</p>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">MEI</p>
-            </div>
-            <span className="hidden text-xs text-slate-400 xl:block">v</span>
-          </div>
+          
         </div>
       </div>
     </header>
