@@ -137,6 +137,30 @@ export function Dashboard() {
     alerts,
   } = dashboardData;
 
+  // Mostrar apenas o intervalo de meses que contém dados (revenue > 0)
+  const visibleMonthlyRevenue = (() => {
+    if (!monthlyRevenue || !monthlyRevenue.length) return monthlyRevenue;
+    const first = monthlyRevenue.findIndex((m) => m.revenue && m.revenue > 0);
+    const last = monthlyRevenue.map((m) => m.revenue).lastIndexOf(
+      monthlyRevenue.map((m) => m.revenue).filter((v) => v !== undefined && v !== null)[monthlyRevenue.map((m) => m.revenue).filter((v) => v !== undefined && v !== null).length - 1]
+    );
+
+    // fallback: se first ou last for -1, usar todo o array
+    if (first === -1) return monthlyRevenue;
+
+    // melhor calcular o último índice com revenue > 0
+    const lastIndex = (() => {
+      for (let i = monthlyRevenue.length - 1; i >= 0; i--) {
+        if (monthlyRevenue[i].revenue && monthlyRevenue[i].revenue > 0) return i;
+      }
+      return -1;
+    })();
+
+    if (lastIndex === -1) return monthlyRevenue;
+
+    return monthlyRevenue.slice(first, lastIndex + 1);
+  })();
+
   const currentMonthLabel = new Intl.DateTimeFormat('pt-BR', { month: 'long' })
     .format(new Date())
     .replace(/^[a-z]/, (letter) => letter.toUpperCase());
@@ -189,7 +213,7 @@ export function Dashboard() {
         >
           <div className="h-[225px]">
             <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={monthlyRevenue} margin={{ left: -18, right: 8, top: 4, bottom: 0 }}>
+              <ComposedChart data={visibleMonthlyRevenue} margin={{ left: -18, right: 8, top: 4, bottom: 0 }}>
                 <CartesianGrid
                   strokeDasharray="4 4"
                   stroke="currentColor"

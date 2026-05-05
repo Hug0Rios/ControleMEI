@@ -4,19 +4,17 @@ import {
   BarChart3,
   BanknoteArrowDown,
   BanknoteArrowUp,
-  CalendarClock,
+  Calendar1,
   CircleDollarSign,
   Building2,
   ClipboardClock,
   ClipboardPlus,
-  FileCheck2,
+  BookText,
   FileText,
   LayoutDashboard,
   LogOut,
   Receipt,
   Settings,
-  Tag,
-  Truck,
   Users,
   type LucideIcon,
   ClipboardList,
@@ -57,7 +55,7 @@ const navigation: NavigationItem[] = [
     to: '/app/notas',
   },
   {
-    label: 'DAS MEI',
+    label: 'DAS Mensal',
     icon: ClipboardList,
     children: [
       { label: 'Gerar DAS', to: '/app/das/gerar', icon: ClipboardPlus },
@@ -65,13 +63,18 @@ const navigation: NavigationItem[] = [
     ],
   },
   {
+    label: 'Declaração Anual',
+    icon: Calendar1,
+    children: [
+      { label: 'Visão Geral', to: '/app/declaracao-anual/visao-geral', icon: FileText },
+      { label: 'Dados', to: '/app/declaracao-anual/dados', icon: BookText },
+    ],
+  },
+  {
     label: 'Relatorios',
     icon: BarChart3,
     to: '/app/relatorios',
   },
-  { label: 'Clientes', icon: Users, to: '/app/cadastros/clientes' },
-  { label: 'Categorias', icon: Tag, to: '/app/cadastros/categorias' },
-  { label: 'Fornecedores', icon: Truck, to: '/app/cadastros/fornecedores' },
   {
     label: 'Configuracoes',
     icon: Settings,
@@ -85,6 +88,7 @@ const navigation: NavigationItem[] = [
 const autoOpenGroupPrefixes: Record<string, string> = {
   Financeiro: '/app/financeiro',
   'DAS MEI': '/app/das',
+  'Declaração Anual': '/app/declaracao-anual',
   Configuracoes: '/app/configuracoes',
 };
 
