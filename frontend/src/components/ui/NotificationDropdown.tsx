@@ -5,7 +5,7 @@ import { getNotifications } from '../../services/notifications.service';
 
 const typeClasses: Record<NotificationType, string> = {
   alert: 'bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-300',
-  info: 'bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-300',
+  info: 'bg-blue-50 text-[#172554] dark:bg-blue-500/10 dark:text-blue-300',
   success: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300',
 };
 
@@ -49,7 +49,7 @@ export function NotificationDropdown() {
             <button
               type="button"
               onClick={() => setUnreadCount(0)}
-              className="text-xs font-semibold text-blue-700 hover:text-blue-900 dark:text-blue-300 dark:hover:text-blue-200"
+              className="text-xs font-semibold text-[#172554] hover:text-blue-900 dark:text-blue-300 dark:hover:text-blue-200"
             >
               Marcar todas como lidas
             </button>

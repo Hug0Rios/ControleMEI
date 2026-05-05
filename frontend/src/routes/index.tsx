@@ -12,10 +12,8 @@ import { Usuario } from '../pages/private/Configuracoes/Usuario';
 import { Dashboard } from '../pages/private/Dashboard';
 import { Despesas } from '../pages/private/Financeiro/Despesas';
 import { Faturamento } from '../pages/private/Financeiro/Faturamento';
-import { Nfe } from '../pages/private/Notas/Nfe';
-import { Nfse } from '../pages/private/Notas/Nfse';
-import { Anual } from '../pages/private/Relatorios/Anual';
-import { Mensal } from '../pages/private/Relatorios/Mensal';
+import { Notas } from '../pages/private/Notas';
+import { Relatorios } from '../pages/private/Relatorios';
 import { Landing } from '../pages/public/Landing';
 
 export function AppRoutes() {
@@ -28,12 +26,10 @@ export function AppRoutes() {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="financeiro/faturamento" element={<Faturamento />} />
         <Route path="financeiro/despesas" element={<Despesas />} />
-        <Route path="notas/nfse" element={<Nfse />} />
-        <Route path="notas/nfe" element={<Nfe />} />
+        <Route path="notas" element={<Notas />} />
+        <Route path="relatorios" element={<Relatorios />} />
         <Route path="das/gerar" element={<GerarDas />} />
         <Route path="das/historico" element={<Historico />} />
-        <Route path="relatorios/mensal" element={<Mensal />} />
-        <Route path="relatorios/anual" element={<Anual />} />
         <Route path="cadastros/clientes" element={<Clientes />} />
         <Route path="cadastros/empresas" element={<Empresas />} />
         <Route path="cadastros/categorias" element={<Categorias />} />

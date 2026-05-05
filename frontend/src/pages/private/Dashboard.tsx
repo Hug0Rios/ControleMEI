@@ -1,12 +1,9 @@
 import {
   Bar,
   CartesianGrid,
-  Cell,
   ComposedChart,
   Line,
   LineChart,
-  Pie,
-  PieChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -22,8 +19,8 @@ import { getDashboardData } from '../../services/dashboard.service';
 
 const dashboardData = getDashboardData();
 
-const cardActionClass =
-  'rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-blue-500/30 dark:hover:bg-blue-500/10 dark:hover:text-blue-200';
+  const cardActionClass =
+  'rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-[#172554] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-blue-500/30 dark:hover:bg-blue-500/10 dark:hover:text-blue-200';
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat('pt-BR', {
@@ -31,6 +28,101 @@ function formatCurrency(value: number) {
     currency: 'BRL',
     maximumFractionDigits: 0,
   }).format(value);
+}
+
+function CustomTooltip({ active, payload, label }: any) {
+  if (!active || !payload || !payload.length) return null;
+
+  // tenta extrair revenue e average dos dados do tooltip
+  const revenuePoint = payload.find((p: any) => p.dataKey === 'revenue') || payload[0];
+  const averagePoint = payload.find((p: any) => p.dataKey === 'average');
+
+  return (
+    <div className="max-w-xs rounded-xl border border-slate-200 bg-white p-3 shadow-lg dark:border-slate-800 dark:bg-slate-900/95">
+      <div className="mb-1 text-xs font-semibold text-slate-500 dark:text-slate-400">{label}</div>
+      <div className="flex items-baseline justify-between gap-4">
+        <div>
+          <div className="text-2xl font-bold text-slate-900 dark:text-white">{formatCurrency(Number(revenuePoint.value))}</div>
+          <div className="text-xs text-slate-500 dark:text-slate-400">Faturamento mensal</div>
+        </div>
+        {averagePoint && (
+          <div className="text-right">
+            <div className="text-lg font-medium text-slate-700 dark:text-slate-200">{formatCurrency(Number(averagePoint.value))}</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">Média mensal</div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function CashFlowTooltip({ active, payload, label }: any) {
+  if (!active || !payload || !payload.length) return null;
+
+  const incomePoint = payload.find((p: any) => p.dataKey === 'income');
+  const expensePoint = payload.find((p: any) => p.dataKey === 'expense');
+
+  return (
+    <div className="max-w-xs rounded-xl border border-slate-200 bg-white p-3 shadow-lg dark:border-slate-800 dark:bg-slate-900/95">
+      <div className="mb-1 text-xs font-semibold text-slate-500 dark:text-slate-400">{label}</div>
+      <div className="flex flex-col gap-2">
+        {incomePoint && (
+          <div className="flex items-baseline justify-between">
+            <div className="text-sm text-slate-500 dark:text-slate-400">Entradas</div>
+            <div className="text-sm font-medium text-slate-900 dark:text-white">{formatCurrency(Number(incomePoint.value))}</div>
+          </div>
+        )}
+        {expensePoint && (
+          <div className="flex items-baseline justify-between">
+            <div className="text-sm text-slate-500 dark:text-slate-400">Saídas</div>
+            <div className="text-sm font-medium text-slate-900 dark:text-white">{formatCurrency(Number(expensePoint.value))}</div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function CircularProgress({ value, label }: { value: number; label: string }) {
+  const clampedValue = Math.max(0, Math.min(100, value));
+  const radius = 44;
+  const circumference = 2 * Math.PI * radius;
+  const dashOffset = circumference - (clampedValue / 100) * circumference;
+
+  return (
+    <div className="relative mx-auto h-[178px] w-[178px]">
+      <svg className="h-full w-full -rotate-90" viewBox="0 0 120 120" aria-hidden="true">
+        <circle
+          cx="60"
+          cy="60"
+          r={radius}
+          stroke="currentColor"
+          strokeWidth="10"
+          fill="none"
+          className="text-slate-200 dark:text-slate-800"
+        />
+        <circle
+          cx="60"
+          cy="60"
+          r={radius}
+          stroke="currentColor"
+          strokeWidth="10"
+          fill="none"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={dashOffset}
+          className="text-[#172554] transition-all duration-500 dark:text-[#2f7cf6]"
+        />
+      </svg>
+
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+        <strong className="text-2xl font-bold text-[#172554] dark:text-white">
+          {clampedValue.toLocaleString('pt-BR', { maximumFractionDigits: 1 })}%
+        </strong>
+        <span className="text-xs text-slate-500 dark:text-slate-400">{label}</span>
+      </div>
+    </div>
+  );
 }
 
 export function Dashboard() {
@@ -45,44 +137,31 @@ export function Dashboard() {
     alerts,
   } = dashboardData;
 
-  const limitChartData = [
-    { name: 'Utilizado', value: meiLimit.usedPercent },
-    { name: 'Disponível', value: 100 - meiLimit.usedPercent },
-  ];
+  const currentMonthLabel = new Intl.DateTimeFormat('pt-BR', { month: 'long' })
+    .format(new Date())
+    .replace(/^[a-z]/, (letter) => letter.toUpperCase());
+
+  function formatCashFlowYAxis(value: number) {
+    const num = Number(value);
+    const absolute = Math.abs(num);
+
+    if (num === 0) return '0';
+
+    if (absolute > 999) {
+      const thousands = Math.floor(absolute / 1000);
+      return `${num < 0 ? '-' : ''}${thousands.toLocaleString('pt-BR')} mil`;
+    }
+
+    return num.toLocaleString('pt-BR');
+  }
+
+  function formatCashFlowDay(dayValue: string) {
+    const day = Number(dayValue.split('/')[0]);
+    return day.toString();
+  }
 
   return (
     <div className="space-y-4">
-      <section className="rounded-xl border border-slate-200/80 bg-white px-5 py-4 shadow-sm dark:border-slate-800 dark:bg-slate-900/95">
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-blue-600 dark:text-blue-300">
-              Painel executivo
-            </p>
-            <h2 className="mt-1 text-xl font-bold text-slate-950 dark:text-white">
-              Visão geral do MEI
-            </h2>
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-              Acompanhe faturamento, obrigações e alertas em uma única área de trabalho.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-3 gap-2 text-center text-xs">
-            <div className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 dark:border-slate-800 dark:bg-slate-950">
-              <span className="block text-slate-500 dark:text-slate-400">Mês</span>
-              <strong className="text-slate-950 dark:text-white">Maio</strong>
-            </div>
-            <div className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 dark:border-slate-800 dark:bg-slate-950">
-              <span className="block text-slate-500 dark:text-slate-400">DAS</span>
-              <strong className="text-slate-950 dark:text-white">{dueItems.length}</strong>
-            </div>
-            <div className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 dark:border-slate-800 dark:bg-slate-950">
-              <span className="block text-slate-500 dark:text-slate-400">Alertas</span>
-              <strong className="text-slate-950 dark:text-white">{alerts.length}</strong>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
         {metrics.map((metric) => (
           <MetricCard
@@ -90,7 +169,6 @@ export function Dashboard() {
             title={metric.title}
             value={metric.value}
             description={metric.description}
-            icon={metric.icon}
             tone={metric.tone}
             progress={metric.progress}
           />
@@ -102,10 +180,10 @@ export function Dashboard() {
           title="Faturamento"
           action={
             <Link
-              to="/app/relatorios/anual"
+              to="/app/financeiro/faturamento"
               className={cardActionClass}
             >
-              Anual
+              Ver financeiro
             </Link>
           }
         >
@@ -126,17 +204,30 @@ export function Dashboard() {
                   className="text-slate-500 dark:text-slate-400"
                 />
                 <YAxis
-                  tickFormatter={(value) => `R$ ${Number(value) / 1000}k`}
+                  tickFormatter={(value) => {
+                    const num = Number(value);
+                    if (num === 0) return '0';
+                    if (Math.abs(num) >= 1000) {
+                      const k = num / 1000;
+                      const formatted = Number.isInteger(k)
+                        ? k.toLocaleString('pt-BR')
+                        : k.toLocaleString('pt-BR', { maximumFractionDigits: 1 });
+                      return `${formatted} mil`;
+                    }
+                    return formatCurrency(num);
+                  }}
                   tickLine={false}
                   axisLine={false}
                   tick={{ fontSize: 11, fill: 'currentColor' }}
                   className="text-slate-500 dark:text-slate-400"
                 />
-                <Tooltip formatter={(value) => formatCurrency(Number(value))} />
+                <Tooltip content={<CustomTooltip />} />
                 <Bar
                   dataKey="revenue"
                   name="Faturamento Mensal"
-                  fill="#2f7cf6"
+                  onTouchMoveCapture={() => {}}
+                  fill="currentColor"
+                  className="text-[#172554] dark:text-[#2f7cf6]"
                   radius={[3, 3, 0, 0]}
                   barSize={18}
                 />
@@ -166,40 +257,7 @@ export function Dashboard() {
           }
         >
           <div className="grid min-h-[225px] grid-cols-1 items-center gap-2 sm:h-[225px] sm:grid-cols-[1fr_0.95fr]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={limitChartData}
-                  dataKey="value"
-                  innerRadius="64%"
-                  outerRadius="86%"
-                  startAngle={90}
-                  endAngle={-270}
-                  paddingAngle={2}
-                >
-                  <Cell fill="#2f7cf6" />
-                  <Cell fill="#e2e8f0" />
-                </Pie>
-                <text
-                  x="50%"
-                  y="47%"
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  className="fill-slate-950 text-xl font-bold dark:fill-white"
-                >
-                  {meiLimit.usedPercent.toLocaleString('pt-BR')}%
-                </text>
-                <text
-                  x="50%"
-                  y="59%"
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  className="fill-slate-500 text-xs dark:fill-slate-400"
-                >
-                  Utilizado
-                </text>
-              </PieChart>
-            </ResponsiveContainer>
+            <CircularProgress value={meiLimit.usedPercent} label="Utilizado" />
 
             <div className="space-y-3 text-xs">
               <div>
@@ -219,7 +277,7 @@ export function Dashboard() {
         </ChartCard>
 
         <ChartCard
-          title="Fluxo de Caixa (Mês)"
+          title={`Fluxo de Entradas e Saídas (${currentMonthLabel})`}
           action={
             <Link
               to="/app/financeiro/faturamento"
@@ -261,19 +319,22 @@ export function Dashboard() {
                 />
                 <XAxis
                   dataKey="day"
+                  ticks={cashFlow.map((point) => point.day)}
+                  interval={0}
+                  tickFormatter={formatCashFlowDay}
                   tickLine={false}
                   axisLine={false}
                   tick={{ fontSize: 10, fill: 'currentColor' }}
                   className="text-slate-500 dark:text-slate-400"
                 />
                 <YAxis
-                  tickFormatter={(value) => `R$ ${Number(value) / 1000}k`}
+                  tickFormatter={formatCashFlowYAxis}
                   tickLine={false}
                   axisLine={false}
                   tick={{ fontSize: 10, fill: 'currentColor' }}
                   className="text-slate-500 dark:text-slate-400"
                 />
-                <Tooltip formatter={(value) => formatCurrency(Number(value))} />
+                <Tooltip content={<CashFlowTooltip />} />
                 <Line
                   type="monotone"
                   dataKey="income"
@@ -298,16 +359,13 @@ export function Dashboard() {
 
       <section className="grid gap-3 xl:grid-cols-[1.15fr_0.75fr_1fr]">
         <ChartCard title="Próximos Vencimentos">
-          <div className="divide-y divide-slate-100 dark:divide-slate-800">
+          <div className="space-y-2">
             {dueItems.map((item) => (
               <Link
                 key={item.id}
-                to="/app/das/historico"
-                className="flex items-center gap-3 rounded-lg px-2 py-3 transition hover:bg-slate-50 dark:hover:bg-slate-800/60 first:pt-0 last:pb-0"
+                to="/app/das/gerar"
+                className="flex items-center gap-3 px-3 py-3 transition rounded-lg border border-slate-100 bg-white hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900/50 dark:hover:bg-slate-800/60"
               >
-                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-xs font-bold text-blue-700 dark:bg-blue-500/10 dark:text-blue-300">
-                  DAS
-                </span>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-bold text-slate-950 dark:text-white">{item.title}</p>
                   <p className="text-xs text-slate-500 dark:text-slate-400">{item.dueDate}</p>
@@ -320,24 +378,18 @@ export function Dashboard() {
         </ChartCard>
 
         <ChartCard
-          title="Notas Fiscais (Mês)"
-          action={
-            <Link
-              to="/app/notas/nfse"
-              className={cardActionClass}
-            >
-              Abrir notas
-            </Link>
-          }
+          title={`Notas Fiscais (${currentMonthLabel})`}
         >
-          <div className="divide-y divide-slate-100 dark:divide-slate-800">
+          <div className="space-y-2">
             {invoiceSummary.map((item) => (
               <Link
                 key={item.id}
-                to={item.label.includes('NFS') ? '/app/notas/nfse' : '/app/notas/nfe'}
-                className="grid grid-cols-[1fr_auto_auto] items-center gap-4 rounded-lg px-2 py-4 transition hover:bg-slate-50 dark:hover:bg-slate-800/60 first:pt-1 last:pb-1"
+                to="/app/notas"
+                className="grid grid-cols-[1fr_auto_auto] items-center gap-4 px-3 py-3 transition rounded-lg border border-slate-100 bg-white hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900/50 dark:hover:bg-slate-800/60"
               >
-                <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{item.label}</span>
+                <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{item.label}
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{currentMonthLabel}</p>
+                </span>
                 <strong className="text-sm text-slate-950 dark:text-white">{item.quantity}</strong>
                 <span className="text-sm text-slate-700 dark:text-slate-300">{item.amount}</span>
               </Link>
