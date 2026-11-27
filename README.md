@@ -1,174 +1,74 @@
-
 # ControleMEI
 
-<<<<<<< HEAD
-Sistema para controle financeiro e operacional de Microempreendedores Individuais (MEI).
+Sistema web para auxiliar Microempreendedores Individuais (MEI) no controle financeiro e operacional do negócio: receitas, despesas, limite anual, DAS, notas fiscais e relatórios, em uma interface simples e profissional.
 
-## Sobre o Projeto
+## Sobre o projeto
 
-O ControleMEI ajuda pequenos negocios a acompanhar receitas, despesas, limite anual do MEI, empresas cadastradas e obrigacoes do dia a dia em uma interface simples e profissional.
+Muitos MEIs não têm controle adequado de receitas, despesas e do limite anual, o que gera problemas fiscais e dificuldade de gestão. O ControleMEI centraliza essas informações em um único lugar. Detalhes em [`docs/`](docs/visao-geral.md).
 
-## Funcionalidades Atuais
+## Funcionalidades atuais
 
-- Dashboard financeiro
-- Cadastro de empresas com consulta de CNPJ
-- Backend FastAPI com PostgreSQL
-- Docker Compose para rodar frontend, backend e banco
-- Estrutura preparada para notas fiscais, DAS e relatorios
+- Autenticação (cadastro, login, recuperação de senha, perfil)
+- Dashboard financeiro (dados fictícios em `web/resources/js/mocks`)
+- Cadastro de empresas por usuário com consulta de CNPJ na BrasilAPI
+- Tema claro/escuro
+- Estrutura de rotas para Financeiro, Notas Fiscais, DAS, Declaração Anual e Relatórios
 
 ## Estrutura
 
-- `frontend/`: aplicacao React/Vite.
-- `backend/`: API FastAPI.
-- `docker-compose.yml`: orquestracao local com PostgreSQL, backend e frontend.
+- `web/`: aplicação Laravel 12 + Inertia + Vue 3 (TypeScript, Tailwind CSS).
+  - `app/Http/Controllers`, `app/Models`, `app/Services`: backend.
+  - `resources/js/pages`: telas Vue; `resources/js/components/layout`: sidebar e header.
+  - `database/migrations`: esquema do banco.
+- `docker-compose.yml`: PostgreSQL + aplicação.
+- `docs/`: regras de negócio, telas, fluxos, banco e integrações.
 - `assets/`: arquivos visuais do projeto.
 
-## Rodando Tudo com Docker
+## Rodando com Docker
 
 ```bash
 docker compose up --build
 ```
 
-Depois abra:
+Abra `http://127.0.0.1:8000` e crie uma conta. As migrations rodam automaticamente ao subir o container.
 
-- Frontend: `http://127.0.0.1:8080`
-- Backend: `http://127.0.0.1:8000`
-- Documentacao da API: `http://127.0.0.1:8000/docs`
+Se as portas 8000 ou 5433 já estiverem em uso: `APP_PORT=18000 DB_FORWARD_PORT=55433 docker compose up --build`.
 
-Esse e o caminho mais simples para outro desenvolvedor do projeto rodar tudo igual na propria maquina.
+## Rodando para desenvolvimento
 
-## Rodando Separado para Desenvolvimento
-
-Suba apenas o banco:
+Requisitos: PHP 8.2+ com `pdo_pgsql`, Composer e Node 22+.
 
 ```bash
-docker compose up -d postgres
-```
+docker compose up -d postgres      # banco em localhost:5433
 
-Rode o backend:
-
-```bash
-cd backend
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8000
-```
-
-Rode o frontend:
-
-```bash
-cd frontend
+cd web
+cp .env.example .env
+composer install
+php artisan key:generate
+php artisan migrate
 npm install
-npm run dev
+composer run dev                   # servidor Laravel + Vite com hot reload
 ```
 
-O frontend de desenvolvimento fica em `http://127.0.0.1:5173`.
+## Testes e checagens
+
+```bash
+cd web
+php artisan test        # testes de backend (usa SQLite em memória)
+npm run typecheck       # checagem de tipos do Vue/TS
+npm run build           # build de produção dos assets
+```
 
 ## Tecnologias
 
-- React
-- Vite
-- TypeScript
+- PHP 8 / Laravel 12
+- Inertia.js + Vue 3 + TypeScript
 - Tailwind CSS
-- FastAPI
+- ApexCharts
 - PostgreSQL
 - Docker
 
 ## Autores
 
 - Hugo Rios
-- Mauricio Zenao
-=======
-Sistema web desenvolvido para auxiliar Microempreendedores Individuais (MEI) no controle financeiro do seu negócio de forma simples, organizada e eficiente.
-
----
-
-##  Sobre o projeto
-
-O ControleMEI foi criado com o objetivo de resolver um problema comum entre microempreendedores: a falta de organização financeira.
-
-Muitos MEIs não possuem controle adequado de receitas, despesas e limite anual, o que pode gerar problemas fiscais e dificuldades na gestão do negócio.
-
-Este sistema busca centralizar essas informações em um único lugar, facilitando a visualização e tomada de decisões.
-
----
-
-##  Objetivo
-
-Fornecer uma ferramenta prática e acessível para:
-
-- Controlar receitas e despesas
-- Acompanhar o faturamento mensal
-- Evitar ultrapassar o limite anual do MEI
-- Melhorar a organização financeira do negócio
-
----
-
-##  Funcionalidades (atuais e planejadas)
-
-- Cadastro de receitas
-- Cadastro de despesas
-- Organização por categorias
-- Visualização de saldo
-- Controle do limite anual do MEI
-- Dashboard financeiro (em desenvolvimento)
-- Importação de dados (planejado)
-- Relatórios mensais e anuais (planejado)
-
----
-
-##  Guia de uso
-
-### 1. Cadastro de dados
-O usuário pode registrar:
-- Entradas (receitas)
-- Saídas (despesas)
-
-### 2. Organização
-Os dados podem ser categorizados para melhor controle financeiro.
-
-### 3. Acompanhamento
-O sistema permite visualizar:
-- Total de receitas
-- Total de despesas
-- Saldo atual
-- Progresso do limite anual
-
-### 4. Análise
-Com base nos dados inseridos, o usuário consegue:
-- Entender sua situação financeira
-- Tomar decisões mais seguras
-- Evitar problemas com faturamento
-
----
-
-##  Público-alvo
-
-- Microempreendedores Individuais (MEI)
-- Pequenos negócios
-- Profissionais autônomos
-
----
-
-##  Futuro do projeto
-
-- Integração com APIs de CNPJ
-- Importação automática de notas fiscais
-- Integração com Open Finance
-- Dashboard avançado com gráficos
-- Versão mobile
-
----
-
-##  Tecnologias
-
-- TypeScript
-- HTML
-
----
-
-##  Autores
-
-- Hugo Rios  
 - Mauricio Zenão
->>>>>>> origin/main
