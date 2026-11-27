@@ -1,20 +1,25 @@
 # Banco de Dados
 
-## Users
+## Users (implementada — starter kit Laravel)
 - id
+- name
 - email
-- password_hash
-- created_at
+- email_verified_at
+- password
+- created_at, updated_at
 
-## Companies
+## Companies (implementada — `web/database/migrations/*_create_companies_table.php`)
 - id
-- user_id
-- cnpj
-- razao_social
-- nome_fantasia
-- cnae
-- data_abertura
-- limite_anual
+- user_id (FK users, cascade)
+- cnpj (14 dígitos; único por usuário)
+- legal_name (razão social)
+- trade_name (nome fantasia, opcional)
+- registration_status (situação cadastral)
+- main_cnae
+- street, number, district, city, state (endereço)
+- opened_at (data de abertura, texto vindo da BrasilAPI)
+- created_at, updated_at
+- limite_anual (planejado)
 
 ## Revenues
 - id

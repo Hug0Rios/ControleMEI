@@ -8,7 +8,7 @@ services:
       POSTGRES_USER: controlemei
       POSTGRES_PASSWORD: controlemei
     ports:
-      - "5433:5432"
+      - "${DB_FORWARD_PORT:-5433}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -17,33 +17,34 @@ services:
       timeout: 5s
       retries: 5
 
-  backend:
+  app:
     build:
-      context: ./backend
-    container_name: controlemei-backend
+      context: ./web
+    container_name: controlemei-app
     restart: unless-stopped
     environment:
-      APP_NAME: ControleMEI API
-      APP_ENV: development
-      DATABASE_URL: postgresql+psycopg://controlemei:controlemei@postgres:5432/controlemei
-      CORS_ORIGINS: http://localhost:8080,http://127.0.0.1:8080,http://localhost:5173,http://127.0.0.1:5173
+      APP_NAME: Meu MEI Brasil
+      APP_ENV: local
+      APP_DEBUG: "true"
+      # Chave apenas para desenvolvimento local. Em produção, gere outra com: php artisan key:generate --show
+      APP_KEY: base64:LLkVCe7ldsNAKdXfLVeujcHsroXmkHvO2SZoquQW6vg=
+      APP_URL: http://127.0.0.1:8000
+      APP_LOCALE: pt_BR
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: controlemei
+      DB_USERNAME: controlemei
+      DB_PASSWORD: controlemei
+      SESSION_DRIVER: database
+      CACHE_STORE: database
+      MAIL_MAILER: log
+      LOG_CHANNEL: stderr
     ports:
-      - "8000:8000"
+      - "${APP_PORT:-8000}:8000"
     depends_on:
       postgres:
         condition: service_healthy
-
-  frontend:
-    build:
-      context: ./frontend
-      args:
-        VITE_API_URL: http://127.0.0.1:8000/api/v1
-    container_name: controlemei-frontend
-    restart: unless-stopped
-    ports:
-      - "8080:80"
-    depends_on:
-      - backend
 
 volumes:
   postgres_data:
