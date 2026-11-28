@@ -32,6 +32,18 @@ docker compose up --build
 
 Abra `http://127.0.0.1:8000` e crie uma conta. As migrations rodam automaticamente ao subir o container.
 
+Usuário de desenvolvimento (opcional): `docker compose exec app php artisan db:seed --force` cria `dev@controlemei.test` com senha `password`.
+
+> Não crie usuários inserindo linhas direto no banco (DBeaver etc.): a coluna `password` precisa de hash bcrypt e uma senha em texto puro derruba o login com *"This password does not use the Bcrypt algorithm"*. Use a tela de cadastro, o seeder ou `php artisan tinker`.
+
+### Acessando o banco (DBeaver ou outro cliente)
+
+| Campo | Valor |
+|---|---|
+| Host | `localhost` |
+| Porta | `5433` (ou o valor de `DB_FORWARD_PORT`) |
+| Banco / Usuário / Senha | `controlemei` |
+
 Se as portas 8000 ou 5433 já estiverem em uso: `APP_PORT=18000 DB_FORWARD_PORT=55433 docker compose up --build`.
 
 ## Rodando para desenvolvimento
